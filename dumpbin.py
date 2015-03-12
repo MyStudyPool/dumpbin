@@ -15,6 +15,7 @@ need_print_address = True
 need_print_dump = True
 need_print_header = True
 dump_to_html = False
+line_to_dump = -1
 
 def print_field(content):
     if dump_to_html:
@@ -73,6 +74,9 @@ def make_data(file_path):
     line = f.read(16)
     line_no = 0
     while line:
+        if line_no / 16 == line_to_dump:
+            break;
+
         if dump_to_html:
             print '<tr>'
 
@@ -115,6 +119,7 @@ if __name__ == "__main__":
     parser.add_argument("--na", help="Do NOT dispaly Address field", action="store_true")
     parser.add_argument("--nd", help="Do NOT dispaly Dump field", action="store_true")
     parser.add_argument("--html", help="Dump into html table", action="store_true")
+    parser.add_argument("-l", "--line", type=int, help="How many lines to dump")
     parser.add_argument("file", help="The file need to dump")
     args = parser.parse_args()
     
@@ -126,5 +131,7 @@ if __name__ == "__main__":
         need_print_dump = False
     if args.html:
         dump_to_html = True
+    if args.line:
+        line_to_dump = args.line
 
     make_data(args.file)
